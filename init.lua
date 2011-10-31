@@ -105,8 +105,8 @@ function methods:frames ( file )
 			end
 			mad.mad_synth_frame ( m.synth , m.frame )
 
-			return m.synth[0].pcm
-		end , self , first
+			return m.frame[0].header , m.synth[0].pcm
+		end , self
 end
 
 return {

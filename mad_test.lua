@@ -12,10 +12,11 @@ local mad = require"mad"
 
 local ffi = require"ffi"
 
-print ( "Version" , mad.version )
-print ( "Copyright" , mad.copyright )
-print ( "Author" , mad.author )
-print ( "Build" , mad.build )
+print ( "Version:" , mad.version )
+print ( "Copyright:" , mad.copyright )
+print ( "Author:" , mad.author )
+print ( "Build:" , mad.build )
+print ( )
 
 local inputfile = assert ( arg[1] , "No input file" )
 
@@ -26,11 +27,13 @@ local fo = io.open ( "samples.raw" , "wb" )
 local len = 0
 local out
 
-local channels
-for frame in m:frames ( file ) do
+local channels , sample_rate
+for header , frame in m:frames ( file ) do
+	sample_rate = header.samplerate
+
 	local samples = m.synth[0].pcm.length
 	channels = m.synth[0].pcm.channels
-	local bitrate = m.frame[0].header.bitrate
+	--local bitrate = m.frame[0].header.bitrate
 
 	if samples*channels > len then
 		len = samples*channels
@@ -45,6 +48,7 @@ for frame in m:frames ( file ) do
 	fo:write ( ffi.string ( out , len*2 ) )
 end
 
-print("Channels:", channels)
+print ( "Sample Rate:" , sample_rate )
+print ( "Channels:" , channels )
 
 fo:close()

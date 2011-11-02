@@ -28,12 +28,21 @@ local len = 0
 local out
 
 local channels , sample_rate
-for header , frame in m:frames ( file ) do
+
+local getmore = function ( dest , len )
+	local s = file:read ( len )
+	if s == nil then -- EOF
+		return false
+	end
+	ffi.copy ( dest , s , #s )
+	return #s
+end
+
+for header , pcm in m:frames ( getmore ) do
 	sample_rate = header.samplerate
 
-	local samples = m.synth[0].pcm.length
-	channels = m.synth[0].pcm.channels
-	--local bitrate = m.frame[0].header.bitrate
+	local samples = pcm.length
+	channels = pcm.channels
 
 	if samples*channels > len then
 		len = samples*channels
@@ -42,10 +51,10 @@ for header , frame in m:frames ( file ) do
 
 	for i=0 , samples-1 do
 		for c=0 , channels-1 do
-			out [ i*channels + c ] = mad.to16bit ( m.synth[0].pcm.samples[c][i] )
+			out [ i*channels + c ] = mad.to16bit ( pcm.samples[c][i] )
 		end
 	end
-	fo:write ( ffi.string ( out , len*2 ) )
+	fo:write ( ffi.string ( out , samples*channels*2 ) )
 end
 
 print ( "Sample Rate:" , sample_rate )

@@ -23,7 +23,7 @@ local inputfile = assert ( arg[1] , "No input file" )
 local file = ioopen ( inputfile , "rb" )
 local m = mad.new ( )
 
-local fo = io.open ( "samples.raw" , "wb" )
+local fo = ioopen ( "samples.raw" , "wb" )
 local len = 0
 local out
 

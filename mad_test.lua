@@ -38,7 +38,7 @@ local getmore = function ( dest , len )
 	return #s
 end
 
-for header , pcm in m:frames ( getmore ) do
+for header , stream , pcm in m:frames ( getmore ) do
 	sample_rate = header.samplerate
 
 	local samples = pcm.length

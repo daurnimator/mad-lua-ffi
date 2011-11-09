@@ -61,7 +61,8 @@ local function nsbsamples ( header )
 end
 
 local function to16bit ( x )
-	local y = x / 2^ ( mad_defs.MAD_F_FRACBITS - 15 ) + ( rand ( ) - 0.5 )
+	local y = x * 2^-( mad_defs.MAD_F_FRACBITS - 14 ) + ( rand ( ) - 0.5 )
+	--if math.abs(y) > 2^15 then print("CLIPPED",y) end
 	return y
 end
 

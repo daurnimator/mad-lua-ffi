@@ -23,7 +23,8 @@ ffi_defs ( rel_dir .. "defs.h" , { [[mad.h]] } )
 local mad
 if jit.os == "Windows" then
 	mad = ffi.load ( rel_dir .. "libMAD" )
---elseif jit.os == "Linux" or jit.os == "OSX" or jit.os == "POSIX" or jit.os == "BSD" then
+elseif jit.os == "Linux" or jit.os == "OSX" or jit.os == "POSIX" or jit.os == "BSD" then
+	mad = ffi.load ( "mad" )
 else
 	error ( "Unknown platform" )
 end

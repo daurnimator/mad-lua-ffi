@@ -40,11 +40,6 @@ local build 		= ffi.string ( mad.mad_build )
 local methods = { }
 local mt = {
 	__index = methods ;
-	__gc = function ( o )
-		mad.mad_synth_finish ( o.synth )
-		mad.mad_frame_finish ( o.frame )
-		mad.mad_stream_finish ( o.stream )
-	end ;
 }
 
 local function is_recoverable ( stream )
@@ -68,9 +63,13 @@ local function to16bit ( x )
 end
 
 function methods:reset ( )
+	-- GC stays the same
+	mad.mad_stream_finish ( self.stream )
 	mad.mad_stream_init ( self.stream )
+
+	mad.mad_frame_finish ( self.frame )
 	mad.mad_frame_init ( self.frame )
-	mad.mad_synth_init ( self.synth )
+
 	self.input_bytes = 0
 end
 
@@ -92,21 +91,24 @@ local DEFAULT_BUFF_SIZE = 8192
 local function new ( buff_size )
 	buff_size = buff_size or DEFAULT_BUFF_SIZE
 
-	local stream = ffi.new ( "struct mad_stream[1]" )
-	local frame = ffi.new ( "struct mad_frame[1]" )
-	local synth = ffi.new ( "struct mad_synth[1]" )
 	local buffer = ffi.new ( "char[?]", buff_size )
 
 	local m = setmetatable ( {
-		stream = stream ;
-		frame = frame ;
-		synth = synth ;
-
 		buff_size = buff_size ;
 		buffer = buffer ;
 		input_bytes = 0 ;
 	} , mt )
-	m:reset ( )
+
+	m.stream = ffi.new ( "struct mad_stream[1]" )
+	mad.mad_stream_init ( m.stream )
+	ffi.gc ( m.stream , mad.mad_stream_finish )
+
+	m.frame = ffi.new ( "struct mad_frame[1]" )
+	mad.mad_frame_init ( m.frame )
+	ffi.gc ( m.frame , mad.mad_frame_finish )
+
+	m.synth = ffi.new ( "struct mad_synth[1]" )
+	mad.mad_synth_init ( m.synth )
 
 	return m
 end

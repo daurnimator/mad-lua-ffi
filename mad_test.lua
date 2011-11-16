@@ -2,12 +2,9 @@
 
 local ioopen = io.open
 
-local general 				= require"general"
-local pretty 				= general.pretty_print
-local current_script_dir 	= general.current_script_dir
-local rel_dir = assert ( current_script_dir ( ) , "Current directory unknown" )
-package.path = package.path .. ";" .. rel_dir .. "../?/init.lua"
 
+package.path = "./?/init.lua;" .. package.path
+package.loaded [ "mad" ] = dofile ( "init.lua" )
 local mad = require"mad"
 
 local ffi = require"ffi"

@@ -16,7 +16,6 @@ local ffi_defs 				= ffi_util.ffi_defs
 local ffi_process_defines 	= ffi_util.ffi_process_defines
 
 ffi_add_include_dir ( rel_dir )
-ffi_defs ( rel_dir .. "mad_defs.h" , { [[mad.h]] } )
 
 assert ( jit , "jit table unavailable" )
 local mad
@@ -27,6 +26,8 @@ elseif jit.os == "Linux" or jit.os == "OSX" or jit.os == "POSIX" or jit.os == "B
 else
 	error ( "Unknown platform" )
 end
+
+ffi_defs ( rel_dir .. "mad_defs.h" , { [[mad.h]] } )
 
 local mad_defs = ffi_process_defines( [[mad.h]] )
 

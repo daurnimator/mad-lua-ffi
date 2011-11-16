@@ -1,7 +1,6 @@
 -- A test for luajit ffi based libmad bindings
 
-local ioopen = io.open
-
+local FILE = assert ( arg[1] , "No input file" )
 
 package.path = "./?/init.lua;" .. package.path
 package.loaded [ "mad" ] = dofile ( "init.lua" )
@@ -15,12 +14,11 @@ print ( "Author:" , mad.author )
 print ( "Build:" , mad.build )
 print ( )
 
-local inputfile = assert ( arg[1] , "No input file" )
-
-local file = ioopen ( inputfile , "rb" )
+local file = io.open ( FILE , "rb" )
 local m = mad.new ( )
 
-local fo = ioopen ( "samples.raw" , "wb" )
+local outfilename = "samples.raw"
+local fo = io.open ( outfilename , "wb" )
 local len = 0
 local out
 
@@ -51,10 +49,10 @@ for header , stream , pcm in m:frames ( getmore ) do
 			out [ i*channels + c ] = mad.to16bit ( pcm.samples[c][i] )
 		end
 	end
-	fo:write ( ffi.string ( out , samples*channels*2 ) )
+
+	fo:write ( ffi.string ( out , samples * channels * ffi.sizeof ( "int16_t" ) ) )
 end
+fo:close()
 
 print ( "Sample Rate:" , sample_rate )
 print ( "Channels:" , channels )
-
-fo:close()

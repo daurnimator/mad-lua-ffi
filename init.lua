@@ -4,6 +4,7 @@ local rel_dir = assert ( debug.getinfo ( 1 , "S" ).source:match ( [=[^@(.-[/\]?)
 
 local assert , error 	= assert , error
 local setmetatable 		= setmetatable
+
 local bit 				= require"bit"
 local band 				= bit.band
 local rand				= math.random
@@ -15,8 +16,9 @@ local ffi_defs 				= ffi_util.ffi_defs
 local ffi_process_defines 	= ffi_util.ffi_process_defines
 
 ffi_add_include_dir ( rel_dir )
-ffi_defs ( rel_dir .. "defs.h" , { [[mad.h]] } )
+ffi_defs ( rel_dir .. "mad_defs.h" , { [[mad.h]] } )
 
+assert ( jit , "jit table unavailable" )
 local mad
 if jit.os == "Windows" then
 	mad = ffi.load ( rel_dir .. "libMAD" )

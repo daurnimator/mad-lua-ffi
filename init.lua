@@ -9,11 +9,10 @@ local bit 				= require"bit"
 local band 				= bit.band
 local rand				= math.random
 
-local ffi 					= require"ffi"
-local ffi_util 				= require"ffi_util"
-local ffi_add_include_dir 	= ffi_util.ffi_add_include_dir
-local ffi_defs 				= ffi_util.ffi_defs
-local ffi_process_defines 	= ffi_util.ffi_process_defines
+local ffi                 = require"ffi"
+local ffi_util            = require"ffi_util"
+local ffi_add_include_dir = ffi_util.ffi_add_include_dir
+local ffi_defs            = ffi_util.ffi_defs
 
 ffi_add_include_dir ( rel_dir )
 
@@ -27,9 +26,7 @@ else
 	error ( "Unknown platform" )
 end
 
-ffi_defs ( rel_dir .. "mad_defs.h" , { [[mad.h]] } )
-
-local mad_defs = ffi_process_defines( [[mad.h]] )
+local cdefs , mad_defs = ffi_defs ( [[mad_funcs.h]] , [[mad_defs.h]] , { [[mad.h]] } )
 
 
 local version 		= ffi.string ( mad.mad_version )
